@@ -20,8 +20,27 @@ export async function getProducts(req, res) {
 
         const db = await getDBConnection()
         let query = 'SELECT * FROM products'
-        const allGenre = await db.all(query)
-        res.json(allGenre)
+        let params = []
+
+        const { genre } = req.query
+
+        if (genre) {
+            query += ' WHERE genre=?'
+            params.push(genre)
+        }
+        
+        const { search } = req.query
+
+        if (query && search) {
+            query += ' OR title LIKE ? OR artist LIKE ? OR genre = ?'
+            params.push(`%${search}%`, `%${search}%`, `%${search}%`)
+        } else if (search) {
+            query += ' WHERE title LIKE ? OR artist LIKE ? OR genre = ?'
+            params.push(`%${search}%`, `%${search}%`, `%${search}%`)
+        }
+
+        const products = await db.all(query, params)
+        res.json(products)
 
     } catch (err) {
         res.status(500).json({error: 'Failed to fetch products', details: err.message})
