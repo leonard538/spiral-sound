@@ -1,4 +1,4 @@
-import { getDBConnection } from "../db/db";
+import { getDBConnection } from "../db/db.js";
 
 export async function addToCart(req, res) {
     const db = await getDBConnection()
@@ -39,3 +39,55 @@ export async function getCartCount(req, res) {
     
     res.json({ totalItems: numProduct.total_items || 0 })
 }
+
+export async function getAll(req, res) {
+    
+    if (!req.body.userId) {
+        return res.json({ err: 'not logged in' })
+    }
+
+    const db = await getDBConnection()
+
+    const items = await db.all(`
+        SELECT ci.id AS cartItemId, ci.quantity, 
+            p.title, p.artist, p.price 
+        FROM cart_items ci JOIN products p ON p.id = ci.product_id WHERE ci.user_id = ?
+    `, [userId])
+
+    res.json({ items: items})
+}
+
+export async function deleteItem(req, res) {
+
+    const db = await getDBConnection();
+
+    if (!isNaN(req.body.cartItemId)) {
+        return res.status(400).json({ error: 'Invalid item ID' })
+    }
+
+    const deleteItem = await db.get(`
+        SELECT quantity FROM cart_items WHERE cartItemId = ? AND user_id = ?
+    `, [req.body.cartItemId, req.session.userId])
+
+    if (deleteItem.quantity === 0) {
+        return res.status(400).json({ error: 'Invalid item ID' })
+    }
+
+    await db.run( `
+        DELETE FROM cart_items WHERE cartItemId = ? AND user_id = ?
+    `, [req.body.cartItemId, req.session.userId])
+
+
+    res.sendStatus(204)
+}
+
+export async function deleteAll(req, res) {
+
+    const db = await getDBConnection()
+
+    await db.run(`
+        DELETE FROM cart_items WHERE user_id = ?
+    `, [req.session.userId])
+
+    res.status(204).send()
+    }

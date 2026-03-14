@@ -1,7 +1,7 @@
 import express from "express"
 import { getGenres, getProducts } from "../controllers/productsController.js"
 
-export const productRouter = express.Router()
+export const productsRouter = express.Router()
 
-productRouter.get('/', getProducts)
-productRouter.get('/genres', getGenres)
+productsRouter.get('/genres', getGenres)
+productsRouter.get('/', getProducts)

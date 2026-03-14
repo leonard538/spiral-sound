@@ -1,4 +1,5 @@
 import { addBtnListeners } from './cartService.js'
+import { getProducts } from './productService.js'
 
 // ===== Rendering products =====
 

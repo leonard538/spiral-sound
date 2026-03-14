@@ -1,4 +1,4 @@
-import { getDBConnection } from "../db/db";
+import { getDBConnection } from "../db/db.js";
 
 export async function getCurrentUser(req, res) {
     try {

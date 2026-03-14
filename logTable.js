@@ -1,4 +1,4 @@
-import { getDBConnection } from '../db/db.js'
+import { getDBConnection } from './db/db.js'
 
 async function logTable() {
   const db = await getDBConnection()
