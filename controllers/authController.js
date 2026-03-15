@@ -25,10 +25,9 @@ export async function registerUser(req, res) {
     try {
         const db = await getDBConnection()
         const params = [username, email]
-
         const rows = await db.all('SELECT id FROM users WHERE username=? OR email=?', params)
 
-        if (rows) {
+        if (rows.length > 0) {
             return res.status(400).json({error: 'Email or username already in use.'})
         }
 
@@ -63,17 +62,20 @@ export async function loginUser(req, res) {
         const user = await db.get('SELECT * FROM users WHERE username=?', [username])
         
         if (!user) {
-            return res.status(400).json({ error: 'Invalid credentials.' })
+            return res.status(400).json({ error: 'Invalid credentials. user' })
         }
 
         const isValid = await bcrypt.compare(password, user.password)
 
         if (!isValid) {
-            return res.status(400).json({ error: 'Invalid credentials.' })
+            return res.status(400).json({ error: 'Invalid credentials. pass' })
         }
 
+        console.log('Database User ID is:', user.id)
         req.session.userId = user.id
-        req.json({ message: 'Logged in' })
+        console.log('Req session User ID is:', req.session.userId)
+        res.json({ message: 'Logged in' })
+        //return res.json({ message: 'Logged in' })
 
     } catch(err) {
         console.error('Login error:', err.message)

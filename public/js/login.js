@@ -22,7 +22,7 @@ signinForm.addEventListener('submit', async (e) => {
         })
 
         const data = await res.json()
-
+        console.log('data from login', data)
         if (res.ok) { 
             window.location.href = '/'
         } else {

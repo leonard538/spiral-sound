@@ -5,7 +5,7 @@ import { getProducts } from './productService.js'
 
 export function renderProducts(products) {
     const albumsContainer = document.getElementById('products-container')
-    const cards = products.map((album) => {
+    const cards = products.map( album => {
         return `
             <div class="product-card">
                 <img src="./images/${album.image}" alt="${album.title}">

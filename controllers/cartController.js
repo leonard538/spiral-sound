@@ -3,7 +3,7 @@ import { getDBConnection } from "../db/db.js";
 export async function addToCart(req, res) {
     const db = await getDBConnection()
 
-    const userId = req.body.userId
+    const userId = req.session.userId
     const productId = parseInt(req.body.productId, 10)
 
     if (isNaN(productId)) {
@@ -31,7 +31,7 @@ export async function addToCart(req, res) {
 export async function getCartCount(req, res) {
     const db = await getDBConnection()
 
-    const userId = req.body.userId
+    const userId = req.session.userId
 
     const numProduct = await db.get(`
         SELECT SUM(quantity) AS total_items FROM cart_items WHERE user_id = ?
@@ -42,7 +42,9 @@ export async function getCartCount(req, res) {
 
 export async function getAll(req, res) {
     
-    if (!req.body.userId) {
+    const userId = req.session.userId
+
+    if (!userId) {
         return res.json({ err: 'not logged in' })
     }
 
@@ -90,4 +92,4 @@ export async function deleteAll(req, res) {
     `, [req.session.userId])
 
     res.status(204).send()
-    }
+}
