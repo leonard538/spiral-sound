@@ -62,22 +62,23 @@ export async function getAll(req, res) {
 export async function deleteItem(req, res) {
 
     const db = await getDBConnection();
+    const itemId = parseInt(req.params.itemId)
 
-    if (!isNaN(req.body.cartItemId)) {
+    if (isNaN(itemId)) {
         return res.status(400).json({ error: 'Invalid item ID' })
     }
 
-    const deleteItem = await db.get(`
-        SELECT quantity FROM cart_items WHERE cartItemId = ? AND user_id = ?
-    `, [req.body.cartItemId, req.session.userId])
+    const item = await db.get(`
+        SELECT id FROM cart_items WHERE id = ? AND user_id = ?
+    `, [itemId, req.session.userId])
 
-    if (deleteItem.quantity === 0) {
+    if (!item) {
         return res.status(400).json({ error: 'Invalid item ID' })
     }
 
     await db.run( `
-        DELETE FROM cart_items WHERE cartItemId = ? AND user_id = ?
-    `, [req.body.cartItemId, req.session.userId])
+        DELETE FROM cart_items WHERE id = ? AND user_id = ?
+    `, [itemId, req.session.userId])
 
 
     res.sendStatus(204)

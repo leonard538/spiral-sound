@@ -12,5 +12,6 @@ export const cartRouter = express.Router()
 cartRouter.post('/add', requireAuth, addToCart)
 cartRouter.get('/cart-count', requireAuth, getCartCount)
 cartRouter.get('/', requireAuth, getAll)
-cartRouter.get('/all', requireAuth, deleteAll)
-cartRouter.get('/:itemId', requireAuth, deleteItem)
+// Deletions must use DELETE so they match the frontend fetch methods.
+cartRouter.delete('/all', requireAuth, deleteAll)
+cartRouter.delete('/:itemId', requireAuth, deleteItem)
