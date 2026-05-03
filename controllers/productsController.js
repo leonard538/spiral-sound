@@ -1,17 +1,17 @@
-import { getDBConnection  } from "../db/db.js"
+import { getDBConnection } from "../db/db.js"
 
 export async function getGenres(req, res) {
-   
     try {
         const db = await getDBConnection()
 
         const query = 'SELECT DISTINCT genre FROM products'
         const distinctGenre = await db.all(query)
 
-        const send = distinctGenre.map( row => row.genre)
+        const send = distinctGenre.map(row => row.genre)
         res.json(send)
-    } catch(error) {
-        res.status(500).json({error: 'Failed to fetch genres:', details: error.message})
+    } catch (error) {
+        console.error('Failed to fetch genres:', error.message)
+        res.status(500).json({ error: 'Failed to fetch genres' })
     }
 }
 
@@ -37,7 +37,8 @@ export async function getProducts(req, res) {
 
         res.json(products)
 
-} catch (err) {
-    res.status(500).json({error: 'Failed to fetch products', details: err.message})
-}
+    } catch (err) {
+        console.error('Failed to fetch products:', err.message)
+        res.status(500).json({ error: 'Failed to fetch products' })
+    }
 }
